@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "601258538286",
+    "project_id": "daily-delivery-records-b30de",
+    "storage_bucket": "daily-delivery-records-b30de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601258538286:android:788085848c056b3a00f6bf",
+        "android_client_info": {
+          "package_name": "com.app.dailydeliveryrecords"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "601258538286-gg0e9tefavlfefgnll4q02efjfmc5m9c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.dailydeliveryrecords",
+            "certificate_hash": "55ccc04c7e0debc62e0f12a086f65c4ce480a362"
+          }
+        },
+        {
+          "client_id": "601258538286-dqnem9i2dburma6hjrvr5ud9bv6pqh05.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA57f3ALAYxk5pmjgBgOtWkBbU454p-CU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "601258538286-dqnem9i2dburma6hjrvr5ud9bv6pqh05.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
