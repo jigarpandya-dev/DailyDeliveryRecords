@@ -102,6 +102,13 @@ fun HomeUI(viewModel: HomeViewModel) {
                     )
                 },
                 enabled = false,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colors.primary,
+                    unfocusedBorderColor = MaterialTheme.colors.primary,
+                    focusedLabelColor = MaterialTheme.colors.primary,
+                    unfocusedLabelColor = MaterialTheme.colors.primary,
+                    textColor = MaterialTheme.colors.primary
+                ),
                 modifier = Modifier
                     .clickable {
                         mExpanded = true

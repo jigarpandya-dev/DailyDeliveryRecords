@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,8 +43,10 @@ import kotlinx.coroutines.CoroutineScope
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SettingScreen(viewModel: HomeViewModel = hiltViewModel(), activity: Activity,showRationale: Boolean,
-                  showRationaleLiveData: MutableLiveData<Boolean>) {
+fun SettingScreen(
+    viewModel: HomeViewModel = hiltViewModel(), activity: Activity, showRationale: Boolean,
+    showRationaleLiveData: MutableLiveData<Boolean>
+) {
 
     val requestPermissionLauncher =
         rememberLauncherForActivityResult(
@@ -168,6 +171,13 @@ fun SettingsUI(
                         onValueChange = { price = it },
                         modifier = Modifier.weight(1f),
                         label = { Text("Price") },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = MaterialTheme.colors.primary,
+                            unfocusedBorderColor = MaterialTheme.colors.primary,
+                            focusedLabelColor = MaterialTheme.colors.primary,
+                            unfocusedLabelColor = MaterialTheme.colors.primary,
+                            textColor = MaterialTheme.colors.primary
+                        ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         readOnly = readOnly,
                         enabled = !readOnly
@@ -280,7 +290,7 @@ fun SettingsUI(
                     bottom = 12.dp
                 )
             ) {
-                Text("Log out ?")
+                Text("Log out ?", color = Color.White)
             }
 
             if (showDialog.value) {

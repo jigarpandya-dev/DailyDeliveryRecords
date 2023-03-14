@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         Scaffold(
             bottomBar = {
-                BottomNavigation {
+                BottomNavigation(backgroundColor = MaterialTheme.colors.primary) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
                     items.forEach { screen ->
