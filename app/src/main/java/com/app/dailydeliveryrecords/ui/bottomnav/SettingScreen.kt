@@ -44,7 +44,7 @@ import kotlinx.coroutines.CoroutineScope
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SettingScreen(
-    viewModel: HomeViewModel = hiltViewModel(), activity: Activity, showRationale: Boolean,
+    viewModel: HomeViewModel, activity: Activity, showRationale: Boolean,
     showRationaleLiveData: MutableLiveData<Boolean>
 ) {
 

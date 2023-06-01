@@ -1,6 +1,12 @@
 package com.app.dailydeliveryrecords.ui.bottomnav
 
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.animation.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,8 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.dailydeliveryrecords.R
+import com.app.dailydeliveryrecords.model.DeliveryItem
 import com.app.dailydeliveryrecords.ui.common.MonthPickerDialog
 import com.app.dailydeliveryrecords.viewmodel.HomeViewModel
 import com.google.firebase.firestore.DocumentSnapshot
@@ -33,32 +39,46 @@ import java.util.*
 
 
 @Composable
-fun MonthlyScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun MonthlyScreen(viewModel: HomeViewModel) {
     val c = Calendar.getInstance()
     val month = c.get(Calendar.MONTH) + 1
     val year = c.get(Calendar.YEAR)
+
+    val mDeliveryItems = arrayListOf<DeliveryItem>()
+    val deliveryValueList: List<DocumentSnapshot> by viewModel.deliveryValueList.observeAsState(
+        emptyList()
+    )
+
+    for (delivery in deliveryValueList) {
+        mDeliveryItems.add(
+            DeliveryItem(
+                delivery.get("label").toString(),
+                (delivery.get("code") as Long).toInt(),
+                delivery.get("unit").toString().toDouble()
+            )
+        )
+    }
+
     viewModel.fetchMonthlyDelivery(month, year)
-    MonthlyUI(viewModel, c) {
+    MonthlyUI(viewModel, c, mDeliveryItems) {
         viewModel.fetchMonthlyDelivery(it, year)
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun MonthlyUI(
     viewModel: HomeViewModel,
     c: Calendar,
+    mDeliveryItems: List<DeliveryItem>,
     onUpdateMonth: (Int) -> Unit
 ) {
 
+
     val deliveryList: List<DocumentSnapshot> by viewModel.deliveryList.observeAsState(emptyList())
-
     val year = c.get(Calendar.YEAR)
-    val month = c.get(Calendar.MONTH)
-    val day = c.get(Calendar.DAY_OF_MONTH)
-
     var currentMonthLabel by remember { mutableStateOf("${SimpleDateFormat("MMM").format(c.time)} $year") }
-
-    var showDialog = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
     if (showDialog.value) {
         MonthPickerDialog(onCancel = {
@@ -138,25 +158,19 @@ fun MonthlyUI(
                             for (delivery in deliveryList) {
                                 report += delivery
                                     .get("date")
-                                    .toString() + "   " + when ((delivery.get("delivery") as Long).toInt()) {
-                                    1 -> {
-                                        "No delivery"
-                                    }
-                                    2 -> {
-                                        "Half litre"
-                                    }
-                                    3 -> {
-                                        "One litre"
-                                    }
-                                    else -> {
-                                        "N/A"
-                                    }
+                                    .toString() + "   " + mDeliveryItems.find {
+                                    it.code == (delivery.get(
+                                        "delivery"
+                                    ) as Long).toInt()
                                 } + "\n"
                             }
 
                             val sendIntent: Intent = Intent().apply {
                                 action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, "Report for $currentMonthLabel\n\n$report")
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "Report for $currentMonthLabel\n\n$report"
+                                )
                                 type = "text/plain"
                             }
 
@@ -179,14 +193,23 @@ fun MonthlyUI(
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp
             )
-        } else {
+        }
+
+        AnimatedVisibility(visible = deliveryList.isNotEmpty(), enter = scaleIn(), exit = scaleOut()) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
-                items(deliveryList.size) { index ->
+                items(deliveryList.size, key = {
+                    it
+                }) { index ->
                     Box(
                         modifier = Modifier
+                            .animateItemPlacement(
+                                tween(
+                                    durationMillis = 1000,
+                                    easing = LinearEasing
+                                )
+                            )
                             .fillMaxWidth()
                             .padding(10.dp)
                             .background(
@@ -206,18 +229,8 @@ fun MonthlyUI(
                         )
 
                         Text(
-                            text = when ((deliveryList[index].get("delivery") as Long).toInt()) {
-                                1 -> {
-                                    "No delivery"
-                                }
-                                2 -> {
-                                    "Half litre"
-                                }
-                                3 -> {
-                                    "One litre"
-                                }
-                                else -> "N/A"
-                            },
+                            text = mDeliveryItems.find { it.code == (deliveryList[index].get("delivery") as Long).toInt() }?.label
+                                ?: "",
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .padding(10.dp)
@@ -227,9 +240,7 @@ fun MonthlyUI(
                             fontSize = 20.sp
                         )
                     }
-
                 }
-
             }
         }
 

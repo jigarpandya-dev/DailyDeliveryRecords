@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -28,11 +29,14 @@ import androidx.navigation.compose.rememberNavController
 import com.app.dailydeliveryrecords.ui.bottomnav.*
 import com.app.dailydeliveryrecords.ui.common.SimpleAlertDialog
 import com.app.dailydeliveryrecords.ui.theme.DailyDeliveryRecordsTheme
+import com.app.dailydeliveryrecords.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel:HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,13 +96,13 @@ class MainActivity : ComponentActivity() {
             },
             backgroundColor = colorResource(id = R.color.beige)
         ) {
-            NavigationGraph(navController = navController, it)
+            NavigationGraph(navController = navController, viewModel,it)
         }
     }
 
 
     @Composable
-    fun NavigationGraph(navController: NavHostController, paddingValues: PaddingValues) {
+    fun NavigationGraph(navController: NavHostController,viewModel:HomeViewModel, paddingValues: PaddingValues) {
 
         val showRationaleLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
         val showRationale by showRationaleLiveData.observeAsState(initial = false)
@@ -109,16 +113,17 @@ class MainActivity : ComponentActivity() {
             Modifier.padding(paddingValues)
         ) {
             composable(BottomNavItem.Home.screen_route) {
-                HomeScreen()
+                HomeScreen(viewModel)
             }
             composable(BottomNavItem.Monthly.screen_route) {
-                MonthlyScreen()
+                MonthlyScreen(viewModel)
             }
             composable(BottomNavItem.Receipts.screen_route) {
-                ReceiptScreen()
+                ReceiptScreen(viewModel)
             }
             composable(BottomNavItem.Setting.screen_route) {
                 SettingScreen(
+                    viewModel = viewModel,
                     activity = this@MainActivity,
                     showRationale = showRationale,
                     showRationaleLiveData = showRationaleLiveData
