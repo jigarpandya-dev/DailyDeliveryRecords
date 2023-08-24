@@ -1,8 +1,6 @@
 package com.app.dailydeliveryrecords.ui.bottomnav
 
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -37,7 +35,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @Composable
 fun MonthlyScreen(viewModel: HomeViewModel) {
     val c = Calendar.getInstance()
@@ -46,7 +43,7 @@ fun MonthlyScreen(viewModel: HomeViewModel) {
 
     val mDeliveryItems = arrayListOf<DeliveryItem>()
     val deliveryValueList: List<DocumentSnapshot> by viewModel.deliveryValueList.observeAsState(
-        emptyList()
+        emptyList(),
     )
 
     for (delivery in deliveryValueList) {
@@ -54,8 +51,8 @@ fun MonthlyScreen(viewModel: HomeViewModel) {
             DeliveryItem(
                 delivery.get("label").toString(),
                 (delivery.get("code") as Long).toInt(),
-                delivery.get("unit").toString().toDouble()
-            )
+                delivery.get("unit").toString().toDouble(),
+            ),
         )
     }
 
@@ -71,10 +68,8 @@ fun MonthlyUI(
     viewModel: HomeViewModel,
     c: Calendar,
     mDeliveryItems: List<DeliveryItem>,
-    onUpdateMonth: (Int) -> Unit
+    onUpdateMonth: (Int) -> Unit,
 ) {
-
-
     val deliveryList: List<DocumentSnapshot> by viewModel.deliveryList.observeAsState(emptyList())
     val year = c.get(Calendar.YEAR)
     var currentMonthLabel by remember { mutableStateOf("${SimpleDateFormat("MMM").format(c.time)} $year") }
@@ -107,15 +102,14 @@ fun MonthlyUI(
         modifier = Modifier
             .fillMaxSize(),
     ) {
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Button(
                 onClick = {
-                    //datePickerDialog.show()
+                    // datePickerDialog.show()
                     showDialog.value = true
                 },
                 modifier = Modifier
@@ -125,13 +119,12 @@ fun MonthlyUI(
                     start = 20.dp,
                     top = 12.dp,
                     end = 20.dp,
-                    bottom = 12.dp
-                )
+                    bottom = 12.dp,
+                ),
             ) {
-
                 Box(
                     modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
@@ -139,12 +132,10 @@ fun MonthlyUI(
                             .size(18.dp)
                             .align(Alignment.CenterEnd),
                         contentDescription = "date picker",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                     Text(currentMonthLabel, color = Color.White)
                 }
-
-
             }
 
             val context = LocalContext.current
@@ -159,9 +150,11 @@ fun MonthlyUI(
                                 report += delivery
                                     .get("date")
                                     .toString() + "   " + mDeliveryItems.find {
-                                    it.code == (delivery.get(
-                                        "delivery"
-                                    ) as Long).toInt()
+                                    it.code == (
+                                        delivery.get(
+                                            "delivery",
+                                        ) as Long
+                                        ).toInt()
                                 } + "\n"
                             }
 
@@ -169,7 +162,7 @@ fun MonthlyUI(
                                 action = Intent.ACTION_SEND
                                 putExtra(
                                     Intent.EXTRA_TEXT,
-                                    "Report for $currentMonthLabel\n\n$report"
+                                    "Report for $currentMonthLabel\n\n$report",
                                 )
                                 type = "text/plain"
                             }
@@ -178,7 +171,7 @@ fun MonthlyUI(
                             startActivity(context, shareIntent, null)
                         }
                     },
-                contentDescription = "share report"
+                contentDescription = "share report",
             )
         }
 
@@ -191,13 +184,13 @@ fun MonthlyUI(
                     .fillMaxSize()
                     .wrapContentSize(align = Alignment.Center),
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp
+                fontSize = 20.sp,
             )
         }
 
         AnimatedVisibility(visible = deliveryList.isNotEmpty(), enter = scaleIn(), exit = scaleOut()) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 items(deliveryList.size, key = {
                     it
@@ -207,15 +200,15 @@ fun MonthlyUI(
                             .animateItemPlacement(
                                 tween(
                                     durationMillis = 1000,
-                                    easing = LinearEasing
-                                )
+                                    easing = LinearEasing,
+                                ),
                             )
                             .fillMaxWidth()
                             .padding(10.dp)
                             .background(
                                 color = colorResource(id = R.color.tab_color),
-                                shape = RoundedCornerShape(4.dp)
-                            )
+                                shape = RoundedCornerShape(4.dp),
+                            ),
                     ) {
                         Text(
                             text = deliveryList[index].get("date").toString(),
@@ -225,7 +218,7 @@ fun MonthlyUI(
                                 .fillMaxWidth(),
                             color = Color.White,
                             textAlign = TextAlign.Start,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
                         )
 
                         Text(
@@ -237,13 +230,11 @@ fun MonthlyUI(
                                 .fillMaxWidth(),
                             color = Color.White,
                             textAlign = TextAlign.End,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
                         )
                     }
                 }
             }
         }
-
     }
-
 }

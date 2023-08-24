@@ -3,7 +3,7 @@ package com.app.dailydeliveryrecords.ui.common
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.* // ktlint-disable no-wildcard-imports
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +21,7 @@ import com.app.dailydeliveryrecords.R
 import com.app.dailydeliveryrecords.ui.theme.Shapes
 
 @Composable
-fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
+fun MonthPickerDialog(onCancel: () -> Unit, onUpdateMonth: (Int, Int) -> Unit) {
     val monthList = listOf(
         "JAN",
         "FEB",
@@ -34,7 +34,7 @@ fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
         "SEP",
         "OCT",
         "NOV",
-        "DEC"
+        "DEC",
     )
     val currentMonth = remember {
         mutableStateOf(0)
@@ -50,7 +50,7 @@ fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
                 .width(400.dp)
                 .background(colorResource(id = R.color.beige), Shapes.medium)
                 .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
             Text(text = "Select month and year", modifier = Modifier.padding(vertical = 10.dp), fontWeight = (FontWeight.Bold), color = colorResource(id = R.color.tab_color))
@@ -65,13 +65,13 @@ fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
                                 currentMonth.value--
                             }
                         },
-                    contentDescription = "previous month"
+                    contentDescription = "previous month",
                 )
                 Text(
                     modifier = Modifier.width(100.dp),
                     textAlign = TextAlign.Center,
                     text = monthList[currentMonth.value],
-                    color = colorResource(id = R.color.tab_color)
+                    color = colorResource(id = R.color.tab_color),
                 )
                 Image(
                     painter = painterResource(id = R.drawable.ic_next),
@@ -82,7 +82,7 @@ fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
                                 currentMonth.value++
                             }
                         },
-                    contentDescription = "next month"
+                    contentDescription = "next month",
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -93,13 +93,13 @@ fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
                         .clickable {
                             currentYear.value--
                         },
-                    contentDescription = "previous year"
+                    contentDescription = "previous year",
                 )
                 Text(
                     modifier = Modifier.width(100.dp),
                     textAlign = TextAlign.Center,
                     text = currentYear.value.toString(),
-                    color = colorResource(id = R.color.tab_color)
+                    color = colorResource(id = R.color.tab_color),
                 )
                 Image(
                     painter = painterResource(id = R.drawable.ic_next),
@@ -108,33 +108,34 @@ fun MonthPickerDialog(onCancel: () -> Unit,onUpdateMonth: (Int,Int) -> Unit) {
                         .clickable {
                             currentYear.value++
                         },
-                    contentDescription = "next year"
+                    contentDescription = "next year",
                 )
             }
             Row(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .padding(10.dp),
             ) {
                 Button(
                     onClick = {
                         onCancel()
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .padding(10.dp)
-                        .width(100.dp)
+                        .width(100.dp),
                 ) {
                     Text("Cancel")
                 }
                 Button(
                     onClick = {
-                        onUpdateMonth(currentMonth.value+1,currentYear.value)
-                    }, modifier = Modifier
+                        onUpdateMonth(currentMonth.value + 1, currentYear.value)
+                    },
+                    modifier = Modifier
                         .padding(10.dp)
-                        .width(100.dp)
+                        .width(100.dp),
                 ) {
                     Text("OK")
                 }
             }
         }
-
     }
 }

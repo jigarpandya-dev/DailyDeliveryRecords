@@ -1,6 +1,5 @@
 package com.app.dailydeliveryrecords.ui.bottomnav
 
-
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedVisibility
@@ -32,10 +31,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import java.text.DecimalFormat
 import java.util.*
 
-
 @Composable
 fun ReceiptScreen(viewModel: HomeViewModel) {
-
     val c = Calendar.getInstance()
     val month = c.get(Calendar.MONTH) + 1
     val year = c.get(Calendar.YEAR)
@@ -47,24 +44,21 @@ fun ReceiptScreen(viewModel: HomeViewModel) {
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ReceiptsUI(viewModel: HomeViewModel) {
-
     val price by viewModel.price.observeAsState(0)
     val deliveryList: List<DocumentSnapshot> by viewModel.deliveryList.observeAsState(emptyList())
-
 
     var total = 0.0
     for (item in deliveryList) {
         total += price.toDouble() * item.get("unit").toString().toDouble()
-
     }
 
     var rotate by remember { mutableStateOf(0f) }
     val flip by animateFloatAsState(rotate, animationSpec = tween(800))
 
     LaunchedEffect(key1 = true, block = {
-        rotate +=180
+        rotate += 180
         Handler(Looper.getMainLooper()).postDelayed({
-            rotate +=180
+            rotate += 180
         }, 1000)
     })
 
@@ -79,13 +73,12 @@ fun ReceiptsUI(viewModel: HomeViewModel) {
             Card(
                 Modifier.graphicsLayer {
                     rotationX = flip
-
                 },
                 shape = RoundedCornerShape(10.dp),
                 backgroundColor = colorResource(id = R.color.tab_color),
                 elevation = 10.dp,
 
-                ) {
+            ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_receipt),
@@ -94,7 +87,7 @@ fun ReceiptsUI(viewModel: HomeViewModel) {
                         modifier = Modifier
                             .width(100.dp)
                             .height(100.dp)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally),
                     )
 
                     Text(
@@ -103,13 +96,10 @@ fun ReceiptsUI(viewModel: HomeViewModel) {
                         color = colorResource(id = R.color.beige),
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         textAlign = TextAlign.Center,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     )
                 }
             }
-
         }
-
-
     }
 }

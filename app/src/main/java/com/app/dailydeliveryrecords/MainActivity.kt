@@ -1,11 +1,8 @@
 package com.app.dailydeliveryrecords
 
-import android.content.pm.PackageManager
-import android.content.pm.PermissionInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -16,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -26,17 +21,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.app.dailydeliveryrecords.ui.bottomnav.*
-import com.app.dailydeliveryrecords.ui.common.SimpleAlertDialog
+import com.app.dailydeliveryrecords.ui.bottomnav.* // ktlint-disable no-wildcard-imports
 import com.app.dailydeliveryrecords.ui.theme.DailyDeliveryRecordsTheme
 import com.app.dailydeliveryrecords.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel:HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +40,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     @Composable
     fun MainScreenView() {
         val items = listOf(
             BottomNavItem.Home,
             BottomNavItem.Monthly,
             BottomNavItem.Receipts,
-            BottomNavItem.Setting
+            BottomNavItem.Setting,
         )
 
         val navController = rememberNavController()
@@ -68,7 +60,7 @@ class MainActivity : ComponentActivity() {
                             icon = {
                                 Icon(
                                     painterResource(id = screen.icon),
-                                    contentDescription = screen.title
+                                    contentDescription = screen.title,
                                 )
                             },
                             label = { Text(screen.title) },
@@ -89,28 +81,26 @@ class MainActivity : ComponentActivity() {
                                     // Restore state when reselecting a previously selected item
                                     restoreState = true
                                 }
-                            }
+                            },
                         )
                     }
                 }
             },
-            backgroundColor = colorResource(id = R.color.beige)
+            backgroundColor = colorResource(id = R.color.beige),
         ) {
-            NavigationGraph(navController = navController, viewModel,it)
+            NavigationGraph(navController = navController, viewModel, it)
         }
     }
 
-
     @Composable
-    fun NavigationGraph(navController: NavHostController,viewModel:HomeViewModel, paddingValues: PaddingValues) {
-
+    fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel, paddingValues: PaddingValues) {
         val showRationaleLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
         val showRationale by showRationaleLiveData.observeAsState(initial = false)
 
         NavHost(
             navController,
             startDestination = BottomNavItem.Home.screen_route,
-            Modifier.padding(paddingValues)
+            Modifier.padding(paddingValues),
         ) {
             composable(BottomNavItem.Home.screen_route) {
                 HomeScreen(viewModel)
@@ -126,20 +116,17 @@ class MainActivity : ComponentActivity() {
                     viewModel = viewModel,
                     activity = this@MainActivity,
                     showRationale = showRationale,
-                    showRationaleLiveData = showRationaleLiveData
+                    showRationaleLiveData = showRationaleLiveData,
                 )
             }
-
-
         }
     }
 }
 
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
+// @Preview(showBackground = true)
+// @Composable
+// fun DefaultPreview() {
 //    DailyDeliveryRecordsTheme {
 //        MainScreenView()
 //    }
-//}
+// }

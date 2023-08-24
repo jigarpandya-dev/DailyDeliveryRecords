@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -32,54 +31,49 @@ import com.app.dailydeliveryrecords.viewmodel.HomeViewModel
 import com.google.firebase.firestore.DocumentSnapshot
 import java.util.*
 
-
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxHeight()
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
-
         Spacer(modifier = Modifier.height(100.dp))
         HomeUI(viewModel)
-        //ProgressUI(viewModel)
+        // ProgressUI(viewModel)
         viewModel.fetchDelivery()
     }
 }
 
 @Composable
 fun HomeUI(viewModel: HomeViewModel) {
-
     // Create a list of items
     val mDeliveryItems = arrayListOf<DeliveryItem>()
 
     val deliveryValueList: List<DocumentSnapshot> by viewModel.deliveryValueList.observeAsState(
-        emptyList()
+        emptyList(),
     )
     var selectedDelivery by remember { mutableStateOf("") }
     var mExpanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
-    val todayDelivery: HomeViewModel.TodayDelivery by viewModel.todayDelivery.observeAsState(HomeViewModel.TodayDelivery(null,0))
+    val todayDelivery: HomeViewModel.TodayDelivery by viewModel.todayDelivery.observeAsState(HomeViewModel.TodayDelivery(null, 0))
     val calendar = viewModel.calendar
-
 
     for (delivery in deliveryValueList) {
         mDeliveryItems.add(
             DeliveryItem(
                 delivery.get("label").toString(),
                 (delivery.get("code") as Long).toInt(),
-                delivery.get("unit").toString().toDouble()
-            )
+                delivery.get("unit").toString().toDouble(),
+            ),
         )
     }
 
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-
         DateUI(viewModel, calendar)
 
         Icon(
@@ -92,11 +86,9 @@ fun HomeUI(viewModel: HomeViewModel) {
             imageVector = Icons.Default.Edit,
             contentDescription = "Update Delivery",
             tint = colorResource(
-                id = R.color.tab_color
-            )
+                id = R.color.tab_color,
+            ),
         )
-
-
     }
 
     Spacer(modifier = Modifier.height(10.dp))
@@ -104,12 +96,11 @@ fun HomeUI(viewModel: HomeViewModel) {
     AnimatedVisibility(
         visible = todayDelivery.delivery != 0,
         enter = expandHorizontally(
-            animationSpec = tween(500,500),
-            expandFrom = Alignment.CenterHorizontally
+            animationSpec = tween(500, 500),
+            expandFrom = Alignment.CenterHorizontally,
         ),
-        exit = fadeOut()
+        exit = fadeOut(),
     ) {
-
         val currentDate = "${calendar.get(Calendar.DAY_OF_MONTH)}/${
             calendar.get(Calendar.MONTH) + 1
         }/${calendar.get(Calendar.YEAR)}"
@@ -120,14 +111,14 @@ fun HomeUI(viewModel: HomeViewModel) {
             color = colorResource(id = R.color.tab_color),
             modifier = Modifier.padding(10.dp),
             textAlign = TextAlign.Center,
-            fontSize = 20.sp
+            fontSize = 20.sp,
         )
     }
 
     AnimatedVisibility(
         visible = todayDelivery.delivery == 0,
         enter = fadeIn(tween(500, 500)),
-        exit = fadeOut()
+        exit = fadeOut(),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -137,7 +128,7 @@ fun HomeUI(viewModel: HomeViewModel) {
                 modifier = Modifier
                     .padding(10.dp),
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp
+                fontSize = 20.sp,
             )
 
             Box() {
@@ -149,7 +140,7 @@ fun HomeUI(viewModel: HomeViewModel) {
                         Icon(
                             Icons.Default.KeyboardArrowDown,
                             "",
-                            tint = colorResource(id = R.color.tab_color)
+                            tint = colorResource(id = R.color.tab_color),
                         )
                     },
                     enabled = false,
@@ -158,16 +149,16 @@ fun HomeUI(viewModel: HomeViewModel) {
                         unfocusedBorderColor = MaterialTheme.colors.primary,
                         focusedLabelColor = MaterialTheme.colors.primary,
                         unfocusedLabelColor = MaterialTheme.colors.primary,
-                        textColor = MaterialTheme.colors.primary
+                        textColor = MaterialTheme.colors.primary,
                     ),
                     modifier = Modifier
                         .clickable {
                             mExpanded = true
                         }
                         .onGloballyPositioned { coordinates ->
-                            //This value is used to assign to the DropDown the same width
+                            // This value is used to assign to the DropDown the same width
                             textFieldSize = coordinates.size.toSize()
-                        }
+                        },
                 )
 
                 DropdownMenu(
@@ -175,7 +166,7 @@ fun HomeUI(viewModel: HomeViewModel) {
                     onDismissRequest = { mExpanded = false },
                     modifier = Modifier
                         .background(colorResource(id = R.color.beige))
-                        .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                        .width(with(LocalDensity.current) { textFieldSize.width.toDp() }),
 
                 ) {
                     mDeliveryItems.forEach { deliveryItem ->
@@ -186,23 +177,19 @@ fun HomeUI(viewModel: HomeViewModel) {
                         }) {
                             Text(
                                 text = deliveryItem.label,
-                                color = colorResource(id = R.color.tab_color)
+                                color = colorResource(id = R.color.tab_color),
                             )
                         }
-
                     }
                 }
             }
         }
-
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DateUI(viewModel: HomeViewModel, c: Calendar) {
-
-
     val year = c.get(Calendar.YEAR)
     val month = c.get(Calendar.MONTH)
     val day = c.get(Calendar.DAY_OF_MONTH)
@@ -210,17 +197,20 @@ fun DateUI(viewModel: HomeViewModel, c: Calendar) {
     var currentMonthLabel by remember { mutableStateOf("$day/${month + 1}/$year") }
 
     val datePickerDialog = DatePickerDialog(
-        LocalContext.current, DatePickerDialog.OnDateSetListener
-        { _, year: Int, month: Int, day: Int ->
-            //onUpdateMonth(month+1)
-            c.set(Calendar.DAY_OF_MONTH, day)
-            c.set(Calendar.MONTH, month)
-            c.set(Calendar.YEAR, year)
-            currentMonthLabel = "$day/${month + 1}/$year"
-            viewModel.fetchDelivery(currentMonthLabel)
-        }, year, month, day
+        LocalContext.current,
+        DatePickerDialog.OnDateSetListener
+            { _, year: Int, month: Int, day: Int ->
+                // onUpdateMonth(month+1)
+                c.set(Calendar.DAY_OF_MONTH, day)
+                c.set(Calendar.MONTH, month)
+                c.set(Calendar.YEAR, year)
+                currentMonthLabel = "$day/${month + 1}/$year"
+                viewModel.fetchDelivery(currentMonthLabel)
+            },
+        year,
+        month,
+        day,
     )
-
 
     Button(
         onClick = {
@@ -233,12 +223,12 @@ fun DateUI(viewModel: HomeViewModel, c: Calendar) {
             start = 20.dp,
             top = 12.dp,
             end = 20.dp,
-            bottom = 12.dp
-        )
+            bottom = 12.dp,
+        ),
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.DateRange,
@@ -246,26 +236,21 @@ fun DateUI(viewModel: HomeViewModel, c: Calendar) {
                     .size(18.dp)
                     .align(Alignment.CenterEnd),
                 contentDescription = "date picker",
-                tint = Color.White
+                tint = Color.White,
             )
             Text(currentMonthLabel, color = Color.White)
         }
-
     }
-
-
 }
-
 
 @Composable
 fun ProgressUI(viewModel: HomeViewModel) {
     val showDialog: Boolean by viewModel.showDialog.observeAsState(false)
-    if (showDialog)
+    if (showDialog) {
         CircularProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentSize(align = Alignment.Center)
+                .wrapContentSize(align = Alignment.Center),
         )
+    }
 }
-
-
