@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.dailydeliveryrecords.R
 import com.app.dailydeliveryrecords.model.DeliveryItem
 import com.app.dailydeliveryrecords.ui.common.MonthPickerDialog
@@ -42,11 +43,9 @@ fun MonthlyScreen(viewModel: HomeViewModel) {
     val year = c.get(Calendar.YEAR)
 
     val mDeliveryItems = arrayListOf<DeliveryItem>()
-    val deliveryValueList: List<DocumentSnapshot> by viewModel.deliveryValueList.observeAsState(
-        emptyList(),
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    for (delivery in deliveryValueList) {
+    for (delivery in uiState.deliveryValueList) {
         mDeliveryItems.add(
             DeliveryItem(
                 delivery.get("label").toString(),
@@ -57,7 +56,7 @@ fun MonthlyScreen(viewModel: HomeViewModel) {
     }
 
     viewModel.fetchMonthlyDelivery(month, year)
-    MonthlyUI(viewModel, c, mDeliveryItems) {
+    MonthlyUI(viewModel,uiState, c, mDeliveryItems) {
         viewModel.fetchMonthlyDelivery(it, year)
     }
 }
@@ -66,11 +65,11 @@ fun MonthlyScreen(viewModel: HomeViewModel) {
 @Composable
 fun MonthlyUI(
     viewModel: HomeViewModel,
+    uiState : HomeViewModel.UIState,
     c: Calendar,
     mDeliveryItems: List<DeliveryItem>,
     onUpdateMonth: (Int) -> Unit,
 ) {
-    val deliveryList: List<DocumentSnapshot> by viewModel.deliveryList.observeAsState(emptyList())
     val year = c.get(Calendar.YEAR)
     var currentMonthLabel by remember { mutableStateOf("${SimpleDateFormat("MMM").format(c.time)} $year") }
     val showDialog = remember { mutableStateOf(false) }
@@ -144,17 +143,17 @@ fun MonthlyUI(
                 modifier = Modifier
                     .padding(10.dp)
                     .clickable {
-                        if (deliveryList.isNotEmpty()) {
+                        if (uiState.deliveryList.isNotEmpty()) {
                             var report = ""
-                            for (delivery in deliveryList) {
+                            for (delivery in uiState.deliveryList) {
                                 report += delivery
                                     .get("date")
                                     .toString() + "   " + mDeliveryItems.find {
                                     it.code == (
-                                        delivery.get(
-                                            "delivery",
-                                        ) as Long
-                                        ).toInt()
+                                            delivery.get(
+                                                "delivery",
+                                            ) as Long
+                                            ).toInt()
                                 } + "\n"
                             }
 
@@ -175,7 +174,7 @@ fun MonthlyUI(
             )
         }
 
-        if (deliveryList.isEmpty()) {
+        if (uiState.deliveryList.isEmpty()) {
             Text(
                 text = "No records found.",
                 fontWeight = FontWeight.Bold,
@@ -188,11 +187,11 @@ fun MonthlyUI(
             )
         }
 
-        AnimatedVisibility(visible = deliveryList.isNotEmpty(), enter = scaleIn(), exit = scaleOut()) {
+        AnimatedVisibility(visible = uiState.deliveryList.isNotEmpty(), enter = scaleIn(), exit = scaleOut()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                items(deliveryList.size, key = {
+                items(uiState.deliveryList.size, key = {
                     it
                 }) { index ->
                     Box(
@@ -211,7 +210,7 @@ fun MonthlyUI(
                             ),
                     ) {
                         Text(
-                            text = deliveryList[index].get("date").toString(),
+                            text = uiState.deliveryList[index].get("date").toString(),
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .padding(10.dp)
@@ -222,7 +221,7 @@ fun MonthlyUI(
                         )
 
                         Text(
-                            text = mDeliveryItems.find { it.code == (deliveryList[index].get("delivery") as Long).toInt() }?.label
+                            text = mDeliveryItems.find { it.code == (uiState.deliveryList[index].get("delivery") as Long).toInt() }?.label
                                 ?: "",
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
