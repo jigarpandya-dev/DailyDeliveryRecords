@@ -31,6 +31,7 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.dailydeliveryrecords.LoginActivity
 import com.app.dailydeliveryrecords.R
 import com.app.dailydeliveryrecords.viewmodel.HomeViewModel
@@ -109,11 +110,9 @@ fun SettingsUI(
         user?.phoneNumber ?: ""
 
 
-    val priceValue by viewModel.price.observeAsState(0.0f)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var price by remember { mutableStateOf(uiState.price) }
     val notify by viewModel.notify.observeAsState(false)
-
-    var price by remember { mutableStateOf(priceValue.toString()) }
-    price = priceValue.toString()
 
     Scaffold(scaffoldState = scaffoldState) {
         Column(
@@ -167,8 +166,10 @@ fun SettingsUI(
                     var readOnly by remember { mutableStateOf(true) }
 
                     OutlinedTextField(
-                        value = price,
-                        onValueChange = { price = it },
+                        value = price.toString(),
+                        onValueChange = { //price = it
+                            price = it.toDouble()
+                         },
                         modifier = Modifier.weight(1f),
                         label = { Text("Price") },
                         colors = TextFieldDefaults.outlinedTextFieldColors(

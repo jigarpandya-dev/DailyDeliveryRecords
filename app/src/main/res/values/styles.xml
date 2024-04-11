@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.DailyDeliveryRecords" parent="FirebaseUI">
         <item name="colorPrimary">@color/tab_color</item>
         <item name="colorPrimaryDark">@color/tab_color</item>
@@ -10,5 +11,15 @@
         <item name="icon">@drawable/fui_ic_googleg_color_24dp</item>
         <item name="backgroundTint">@color/fui_bgGoogle</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Widget.DailyDeliveryRecords.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.DailyDeliveryRecords.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 </resources>

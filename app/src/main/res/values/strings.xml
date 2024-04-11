@@ -3,4 +3,7 @@
     <string name="app_full_name">Daily Delivery Records</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.app.dailydeliveryrecords.NewAppWidget
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
@@ -54,10 +55,10 @@ class HomeViewModel : ViewModel() {
             }
     }
 
-    fun setPrice(price: String) {
+    fun setPrice(price: Double) {
         val record =
             hashMapOf(
-                "price" to if (price.isEmpty()) 0 else price.toDouble(),
+                "price" to price,
                 "user" to user,
             )
         // Add a new document with a generated ID
@@ -153,9 +154,7 @@ class HomeViewModel : ViewModel() {
                    _uiState.value = _uiState.value.copy(
                         todayDelivery = TodayDelivery(todayDate, 0),
                     )
-                    return@addOnSuccessListener
                 }
-
                 for (document in documents) {
                     Log.d("MainActivity", "${document.id} => ${document.data}")
                     _uiState.value = _uiState.value.copy(

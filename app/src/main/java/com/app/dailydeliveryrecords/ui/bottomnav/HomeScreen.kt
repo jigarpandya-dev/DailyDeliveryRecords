@@ -37,9 +37,9 @@ fun HomeScreen(viewModel: HomeViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
+        Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
     ) {
         Spacer(modifier = Modifier.height(100.dp))
         HomeUI(viewModel)
@@ -57,15 +57,18 @@ fun HomeUI(viewModel: HomeViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val calendar = viewModel.calendar
 
-    for (delivery in uiState.deliveryValueList) {
-        mDeliveryItems.add(
-            DeliveryItem(
-                delivery.get("label").toString(),
-                (delivery.get("code") as Long).toInt(),
-                delivery.get("unit").toString().toDouble(),
-            ),
-        )
+    LaunchedEffect(uiState) {
+        for (delivery in uiState.deliveryValueList) {
+            mDeliveryItems.add(
+                DeliveryItem(
+                    delivery.get("label").toString(),
+                    (delivery.get("code") as Long).toInt(),
+                    delivery.get("unit").toString().toDouble(),
+                ),
+            )
+        }
     }
+
 
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -75,12 +78,12 @@ fun HomeUI(viewModel: HomeViewModel) {
 
         Icon(
             modifier =
-                Modifier
-                    .padding(start = 10.dp)
-                    .alpha(if (uiState.todayDelivery.delivery != 0) 1.0f else 0.0f)
-                    .clickable {
-                        viewModel.setDelivery(0, 0.0)
-                    },
+            Modifier
+                .padding(start = 10.dp)
+                .alpha(if (uiState.todayDelivery.delivery != 0) 1.0f else 0.0f)
+                .clickable {
+                    viewModel.setDelivery(0, 0.0)
+                },
             imageVector = Icons.Default.Edit,
             contentDescription = "Update Delivery",
             tint =
@@ -154,14 +157,14 @@ fun HomeUI(viewModel: HomeViewModel) {
                             textColor = MaterialTheme.colors.primary,
                         ),
                     modifier =
-                        Modifier
-                            .clickable {
-                                mExpanded = true
-                            }
-                            .onGloballyPositioned { coordinates ->
-                                // This value is used to assign to the DropDown the same width
-                                textFieldSize = coordinates.size.toSize()
-                            },
+                    Modifier
+                        .clickable {
+                            mExpanded = true
+                        }
+                        .onGloballyPositioned { coordinates ->
+                            // This value is used to assign to the DropDown the same width
+                            textFieldSize = coordinates.size.toSize()
+                        },
                 )
 
                 DropdownMenu(

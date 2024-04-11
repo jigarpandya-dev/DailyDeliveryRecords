@@ -1,5 +1,7 @@
 package com.app.dailydeliveryrecords
 
+
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,10 +23,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.app.dailydeliveryrecords.ui.bottomnav.* // ktlint-disable no-wildcard-imports
+import com.app.dailydeliveryrecords.ui.bottomnav.*
 import com.app.dailydeliveryrecords.ui.theme.DailyDeliveryRecordsTheme
 import com.app.dailydeliveryrecords.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -38,6 +41,11 @@ class MainActivity : ComponentActivity() {
                 MainScreenView()
             }
         }
+
+
+//        val intent = Intent(NewAppWidget.ACTION_TEXT_CHANGED)
+//        intent.putExtra("NewString", "MainActivity")
+//        sendBroadcast(intent)
     }
 
     @Composable
