@@ -4,15 +4,21 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.app.dailydeliveryrecords.NewAppWidget
+import androidx.lifecycle.viewModelScope
+import com.app.dailydeliveryrecords.model.DeliveryItem
+import com.app.dailydeliveryrecords.network.ApiResponse
+import com.app.dailydeliveryrecords.network.ktorHttpClient
+import com.app.dailydeliveryrecords.network.safeRequest
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import io.ktor.client.request.get
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.*
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class HomeViewModel : ViewModel() {
 
@@ -207,19 +213,17 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun fetchDeliveryValues() {
-        _showDialog.value = true
-        db.collection("delivery_values")
-            .get()
-            .addOnSuccessListener { documents ->
-                _uiState.value = _uiState.value.copy(
-                    deliveryValueList = documents.documents
-                )
-                _showDialog.value = false
+        viewModelScope.launch {
+            _showDialog.value = true
+            val apiResponse = ktorHttpClient.safeRequest<List<DeliveryItem>, String> {
+                ktorHttpClient.get("http://192.168.10.46:8005/delivery/values")
             }
-            .addOnFailureListener { exception ->
-                _showDialog.value = false
-                Log.w("MainActivity", "Error getting documents: ", exception)
+            if(apiResponse is ApiResponse.Success) {
+                val deliveryValues = apiResponse.body
+                _uiState.value = _uiState.value.copy(deliveryValueList = deliveryValues)
             }
+            _showDialog.value = false
+        }
     }
 
     data class TodayDelivery(val today: String? = null, val delivery: Int = 0)
@@ -228,7 +232,7 @@ class HomeViewModel : ViewModel() {
         val showDialog: Boolean = false,
         val todayDelivery: TodayDelivery = TodayDelivery(),
         val deliveryList: List<DocumentSnapshot> = emptyList(),
-        val deliveryValueList: List<DocumentSnapshot> = emptyList(),
+        val deliveryValueList: List<DeliveryItem> = emptyList(),
         val price: Double = 0.0,
         val notify: Boolean = false
     )

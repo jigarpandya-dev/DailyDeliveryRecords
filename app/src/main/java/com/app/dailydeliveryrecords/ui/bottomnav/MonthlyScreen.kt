@@ -42,21 +42,11 @@ fun MonthlyScreen(viewModel: HomeViewModel) {
     val month = c.get(Calendar.MONTH) + 1
     val year = c.get(Calendar.YEAR)
 
-    val mDeliveryItems = arrayListOf<DeliveryItem>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    for (delivery in uiState.deliveryValueList) {
-        mDeliveryItems.add(
-            DeliveryItem(
-                delivery.get("label").toString(),
-                (delivery.get("code") as Long).toInt(),
-                delivery.get("unit").toString().toDouble(),
-            ),
-        )
-    }
 
     viewModel.fetchMonthlyDelivery(month, year)
-    MonthlyUI(viewModel,uiState, c, mDeliveryItems) {
+    MonthlyUI(viewModel,uiState, c, uiState.deliveryValueList) {
         viewModel.fetchMonthlyDelivery(it, year)
     }
 }

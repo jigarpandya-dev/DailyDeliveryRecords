@@ -50,24 +50,11 @@ fun HomeScreen(viewModel: HomeViewModel) {
 @Composable
 fun HomeUI(viewModel: HomeViewModel) {
     // Create a list of items
-    val mDeliveryItems = arrayListOf<DeliveryItem>()
     var selectedDelivery by remember { mutableStateOf("") }
     var mExpanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val calendar = viewModel.calendar
-
-    LaunchedEffect(uiState) {
-        for (delivery in uiState.deliveryValueList) {
-            mDeliveryItems.add(
-                DeliveryItem(
-                    delivery.get("label").toString(),
-                    (delivery.get("code") as Long).toInt(),
-                    delivery.get("unit").toString().toDouble(),
-                ),
-            )
-        }
-    }
 
 
     Row(
@@ -109,7 +96,7 @@ fun HomeUI(viewModel: HomeViewModel) {
         }/${calendar.get(Calendar.YEAR)}"
 
         Text(
-            text = "You have entered $currentDate delivery!\n\n${mDeliveryItems.find { it.code == uiState.todayDelivery.delivery }?.label ?: ""}",
+            text = "You have entered $currentDate delivery!\n\n${uiState.deliveryValueList.find { it.code == uiState.todayDelivery.delivery }?.label ?: ""}",
             fontWeight = FontWeight.Bold,
             color = colorResource(id = R.color.tab_color),
             modifier = Modifier.padding(10.dp),
@@ -171,11 +158,11 @@ fun HomeUI(viewModel: HomeViewModel) {
                     expanded = mExpanded,
                     onDismissRequest = { mExpanded = false },
                     modifier =
-                        Modifier
-                            .background(colorResource(id = R.color.beige))
-                            .width(with(LocalDensity.current) { textFieldSize.width.toDp() }),
+                    Modifier
+                        .background(colorResource(id = R.color.beige))
+                        .width(with(LocalDensity.current) { textFieldSize.width.toDp() }),
                 ) {
-                    mDeliveryItems.forEach { deliveryItem ->
+                    uiState.deliveryValueList.forEach { deliveryItem ->
                         DropdownMenuItem(onClick = {
                             mExpanded = false
                             selectedDelivery = deliveryItem.label
@@ -227,9 +214,9 @@ fun DateUI(
             datePickerDialog.show()
         },
         modifier =
-            Modifier
-                .width(200.dp)
-                .padding(10.dp),
+        Modifier
+            .width(200.dp)
+            .padding(10.dp),
         contentPadding =
             PaddingValues(
                 start = 20.dp,
@@ -245,9 +232,9 @@ fun DateUI(
             Icon(
                 imageVector = Icons.Default.DateRange,
                 modifier =
-                    Modifier
-                        .size(18.dp)
-                        .align(Alignment.CenterEnd),
+                Modifier
+                    .size(18.dp)
+                    .align(Alignment.CenterEnd),
                 contentDescription = "date picker",
                 tint = Color.White,
             )
@@ -262,9 +249,9 @@ fun ProgressUI(viewModel: HomeViewModel) {
     if (showDialog) {
         CircularProgressIndicator(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(align = Alignment.Center),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentSize(align = Alignment.Center),
         )
     }
 }
